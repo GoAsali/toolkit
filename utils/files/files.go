@@ -2,7 +2,7 @@ package files
 
 import (
 	"errors"
-	"github.com/abolfazlalz/goasali/kit/utils/slices"
+	"github.com/goasali/toolkit/utils/slices"
 	"log"
 	"os"
 	"strings"

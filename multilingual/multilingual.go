@@ -1,7 +1,7 @@
 package multilingual
 
 import (
-	filesUtils "github.com/abolfazlalz/goasali/kit/utils/files"
+	filesUtils "github.com/goasali/toolkit/utils/files"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/text/language"
 	"log"
