@@ -2,8 +2,8 @@ package multilingual
 
 import (
 	"fmt"
-	filesUtils "github.com/abolfazlalz/goasali/pkg/utils/files"
-	"github.com/abolfazlalz/goasali/pkg/utils/slices"
+	filesUtils "github.com/goasali/toolkit/utils/files"
+	"github.com/goasali/toolkit/utils/slices"
 	"golang.org/x/text/language"
 	"os"
 	"path/filepath"
