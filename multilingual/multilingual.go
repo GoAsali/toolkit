@@ -3,32 +3,31 @@ package multilingual
 import (
 	filesUtils "github.com/goasali/toolkit/utils/files"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
+	log "github.com/sirupsen/logrus"
 	"golang.org/x/text/language"
-	"log"
 )
+
+var bundle *i18n.Bundle
 
 type Multilingual struct {
 	*i18n.Bundle
-	Path    string
-	Modules []string
+	Path string
 }
 
-func New() *Multilingual {
-	return &Multilingual{
-		Bundle:  i18n.NewBundle(language.English),
-		Path:    "languages",
-		Modules: make([]string, 0),
-	}
+func NewMultilingual(b *i18n.Bundle, path string) *Multilingual {
+	bundle = b
+	return &Multilingual{Bundle: bundle, Path: path}
 }
 
-// Load Load all messages.json from languages folder
+func Bundle() *i18n.Bundle {
+	return bundle
+}
+
+// Load Load all messages from languages folder
 func (m *Multilingual) Load() error {
-	lastPrefix := log.Prefix()
-	log.SetPrefix("[Language loading] - ")
-	defer func(lastPrefix string) {
+	defer func() {
 		log.Println("complete")
-		log.SetPrefix(lastPrefix)
-	}(lastPrefix)
+	}()
 
 	log.Println("Loading multilingual list")
 
@@ -55,11 +54,7 @@ func (m *Multilingual) Load() error {
 	return nil
 }
 
-func (m *Multilingual) AddModule(path string) {
-	m.Modules = append(m.Modules, path)
-}
-
-// ChangeLanguageDirectory Change language directory and reload messages.json files
+// ChangeLanguageDirectory Change language directory and reload messages files
 func (m *Multilingual) ChangeLanguageDirectory(dirPath string) error {
 	m.Path = dirPath
 	return m.Load()
