@@ -35,7 +35,7 @@ func WithDatabase(db *gorm.DB) ConfigFunc {
 	}
 }
 
-func getConfig(functions ...ConfigFunc) Config {
+func getConfig(functions ...ConfigFunc) *Config {
 	config := Config{
 		mode: "debug",
 		host: "",
@@ -44,5 +44,5 @@ func getConfig(functions ...ConfigFunc) Config {
 	for _, configFunc := range functions {
 		configFunc(&config)
 	}
-	return config
+	return &config
 }

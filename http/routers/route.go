@@ -10,6 +10,7 @@ import (
 	"github.com/goasali/toolkit/http/validations"
 	"github.com/goasali/toolkit/storage"
 	log "github.com/sirupsen/logrus"
+	"strconv"
 )
 
 type Interface interface {
@@ -33,25 +34,39 @@ type Route struct {
 	appConfig *config.App
 }
 
-func SetupRouter() *Route {
-	appConfig, err := config.GetApp()
-	if err != nil {
-		log.Fatalf("Error during load app environments: %v", err)
+func SetupRouter(configFunctions ...ConfigFunc) *Route {
+	c := getConfig(configFunctions...)
+	appConfig, _ := config.GetApp()
+
+	if c.mode != "" {
+		appConfig.Mode = c.mode
 	}
-	if appConfig.Mode != "" {
-		gin.SetMode(appConfig.Mode)
+	if c.host != "" {
+		appConfig.Host = c.host
+	}
+	if c.port != 0 {
+		appConfig.Port = strconv.Itoa(c.port)
+	}
+
+	if c.mode != "" {
+		gin.SetMode(c.mode)
 	}
 	router := gin.Default()
+
 	for _, disk := range config.PublicDisks() {
 		storage.DiskFromConfig(disk).ServeOnRoute(disk.Route, router)
 	}
 
 	router.Use(middlewares.Logging())
-	router.Use(middlewares.CORSMiddleware())
 	router.Use(middlewares.Recovery())
 
-	r := &Route{router, appConfig}
-	r.loadValidations()
+	r := &Route{
+		router,
+		appConfig,
+	}
+	if db := c.db; db != nil {
+		r.loadValidations()
+	}
 
 	return r
 }
