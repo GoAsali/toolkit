@@ -10,6 +10,12 @@ import (
 	"os"
 )
 
+type MultiPartMessage struct {
+	Other string `json:"other"`
+	Few   string `json:"few"`
+	Zero  string `json:"zero"`
+}
+
 func convertRaw(name string, raw interface{}) ([]*i18n.Message, error) {
 	messages := make([]*i18n.Message, 0)
 	switch data := raw.(type) {
@@ -19,6 +25,11 @@ func convertRaw(name string, raw interface{}) ([]*i18n.Message, error) {
 	case map[string]interface{}:
 		for k, v := range data {
 			key := fmt.Sprintf("%s.%s", name, k)
+			if value, ok := v.(i18n.Message); ok {
+				msg := &value
+				messages = append(messages, msg)
+				continue
+			}
 			switch value := v.(type) {
 			case string:
 				msg := &i18n.Message{
